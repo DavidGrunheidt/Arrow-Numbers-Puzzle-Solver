@@ -1,6 +1,7 @@
-module Borders (Borders, emptyBorders, checkBordersConstrains, bordersLength) where
+module Borders (Borders, emptyBorders, checkBordersConstrains, bordersLength, getArrowFromBorder, borderToCordenate) where
 
 import Arrows
+import Matrix
 
 type Borders = [Arrow]
 
@@ -13,7 +14,16 @@ emptyBorders = []
 bordersLength :: Int -> Int
 bordersLength matrixLength = 4 * matrixLength
 
-{- 1º param. = matrix length (number of lines or columns (equals)). 
+getArrowFromBorder :: Int -> Borders -> Arrow
+getArrowFromBorder index borders = borders!!index
+
+borderToCordinate :: Int -> Int -> Coordinate
+borderToCordenate matrixLength borderIndex | (borderIndex < matrixLength) = (0 , borderIndex)
+										   | ((borderIndex >= matrixLength) && (borderIndex < (2 * matrixLength))) = ((borderIndex - matrixLength) , (matrixLength-1))
+										   | ((borderIndex >= (2 * matrixLength)) && (borderIndex < (3 * matrixLength))) = ((matrixLength-1) , (borderIndex - (2*matrixLength)))
+										   | ((borderIndex >= (3 * matrixLength)) && (borderIndex < (4 * matrixLength))) = ((borderIndex - (3*matrixLength)) , 0)
+
+{- 1º param. = matrix length (number of lines or columns (equal)). 
    2º param. = actual borders index beeing tested
    3º param. = Arrow that will be put on that position 
    Returns if that border position admits that arrow. -}
