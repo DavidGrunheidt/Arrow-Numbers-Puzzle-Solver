@@ -1,4 +1,4 @@
-module Borders (Borders, emptyBorders, checkBordersConstrains, bordersLength, getArrowFromBorder, borderToCordenate) where
+module Borders (Borders, emptyBorders, checkBordersConstrains, bordersLength, getArrowFromBorder, borderToCordinate) where
 
 import Arrows
 import Matrix
@@ -12,16 +12,16 @@ emptyBorders = []
 {- Returns the number of borders based on the length
    of a matrix. -}
 bordersLength :: Int -> Int
-bordersLength matrixLength = 4 * matrixLength
+bordersLength matrixLen = 4 * matrixLen
 
 getArrowFromBorder :: Int -> Borders -> Arrow
 getArrowFromBorder index borders = borders!!index
 
 borderToCordinate :: Int -> Int -> Coordinate
-borderToCordenate matrixLength borderIndex | (borderIndex < matrixLength) = (0 , borderIndex)
-										   | ((borderIndex >= matrixLength) && (borderIndex < (2 * matrixLength))) = ((borderIndex - matrixLength) , (matrixLength-1))
-										   | ((borderIndex >= (2 * matrixLength)) && (borderIndex < (3 * matrixLength))) = ((matrixLength-1) , (borderIndex - (2*matrixLength)))
-										   | ((borderIndex >= (3 * matrixLength)) && (borderIndex < (4 * matrixLength))) = ((borderIndex - (3*matrixLength)) , 0)
+borderToCordinate matrixLen borderIndex | (borderIndex < matrixLen) = (0 , borderIndex)
+										| ((borderIndex >= matrixLen) && (borderIndex < (2 * matrixLen))) = ((borderIndex - matrixLen) , (matrixLen-1))
+										| ((borderIndex >= (2 * matrixLen)) && (borderIndex < (3 * matrixLen))) = ((matrixLen-1) , (borderIndex - (2*matrixLen)))
+										| ((borderIndex >= (3 * matrixLen)) && (borderIndex < (4 * matrixLen))) = ((borderIndex - (3*matrixLen)) , 0)
 
 {- 1º param. = matrix length (number of lines or columns (equal)). 
    2º param. = actual borders index beeing tested

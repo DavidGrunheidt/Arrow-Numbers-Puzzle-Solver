@@ -1,4 +1,4 @@
-module Elements (Element, getTotalArrows, getPointingArrows) where
+module Elements (Element, getTotalArrows, getPointingArrows, emptyElementList) where
 
 {- First element of the pair - Total number of arrow that have
    to point to this element. Second - Actual number of arrows
@@ -10,3 +10,6 @@ getTotalArrows (nTotal, _) = nTotal
 
 getPointingArrows :: Element -> Int
 getPointingArrows (_, nPointing) = nPointing
+
+emptyElementList :: [Element]
+emptyElementList = []
