@@ -5,6 +5,10 @@ import Elements
 import Borders
 import Arrows
 
+{- Atualiza a matriz de acordo com a flecha selecionada em uma determinada
+   borda da matriz. Utilza-se das funções auxiliares descritas abaixo para
+   realizar isso, porem, cada função é especifica para uma flecha. Logo, não
+   é necessario descreve-las aqui. (Já está no relatorio)-}
 matrixUpdate :: Matrix -> Int -> Int -> Int -> Matrix
 matrixUpdate matrix matrixLen borderIndex arrow | (arrow == 0) = (updateAllNW matrix matrixLen (borderToCordinate matrixLen borderIndex))
 											    | (arrow == 1) = (updateAllN matrix matrixLen (borderToCordinate matrixLen borderIndex))

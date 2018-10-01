@@ -4,26 +4,27 @@ type Direction = String
 type DirectionValue = Int
 type Arrow = (Direction, DirectionValue)
 
-{- List with pairs representing all possible states of an
-   arrow, as all auxiliar values correlated to that state -}
+{- Lista com os pares representando todos os possiveis estados
+   de uma flecha, assim como valores auxiliares pra comparação
+   na hora de mostrar a solução do problema. -}
 arrows :: [Arrow]
 arrows = [("NW",0),("N",1),("NE",2),("E",3),("SE",4),("S",5),("SW",6),("W",7)]
 
-{- Returns the number of possible state of an arrow -}
+{- Retorna o numero de possiveis estados de uma flecha. -}
 arrowsLength :: Int
 arrowsLength = 8
 
-{- Get the pair with a string representing the direction of
-   a given an the corresponding value of that direction -}
+{- Retorna o par contendo a string que representa a direção
+   de uma flecha assim como seu valor, de acordo com um index
+   dado, o qual selecionara uma flecha das flechas padrões
+   definidas na função arrows. -}
 getArrow :: Int -> Arrow
 getArrow index = arrows!!index
 
-{- Auxiliar function of getArrowDirection, wich gets the
-   first  element of the pair that composes an arrow. -}
+{- Retorna a string representando a direção da flecha. -}
 getDirection :: Arrow -> Direction
 getDirection (direction, _) = direction
 
-{- Auxiliar function of getArrowDirection, wich gets the  
-   second element of the pair that composes an arrow. -}
+{- Retorna o valor int representando a direção da flecha. -}
 getDirectionValue :: Arrow -> DirectionValue
 getDirectionValue (_, value) = value

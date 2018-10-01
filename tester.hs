@@ -5,10 +5,12 @@ import Borders
 import Elements
 import Arrows
 
-{- 1º param. = matrix length (number of lines or columns (equal)). 
-   2º param. = actual borders index beeing tested
-   3º param. = Arrow that will be put on that position 
-   Returns if that border position admits that arrow. -}
+{- 1º Parametro = Tamanho de uma linha da matriz
+   2º Parametro = Index da borda atual a ser testada
+   3º Parametro = Flecha candidata a ser posta nesta posição de borda 
+   Teste inicial para determinar se uma flecha pode ser colocada em uma
+   borda, ou seja, se ela, naquela borda, aponta pra dentro ou pra fora 
+   da matriz.-}
 testBordersConstraints :: Int -> Int -> DirectionValue -> Bool
 testBordersConstraints n i d | (i == 0) = if ((d == 4) || (d == 5)) then True else False
 							 | ((i > 0) && (i < (n-1))) = if ((d >= 4) && (d <= 6)) then True else False 
@@ -24,6 +26,12 @@ testBordersConstraints n i d | (i == 0) = if ((d == 4) || (d == 5)) then True el
 							 | (i == (4*n-1)) = if ((d == 3) || (d == 4)) then True else False
 							 | otherwise = False
 
+{- Teste para saber se uma flecha colocada em uma determinada borda
+   aponta pra algum elemento que não pode ter mais nenhuma flecha
+   apontando pra ele, pois o numero de flechas apontando já é igual
+   ao numero de flechas que devem apontar. Utiliza-se das funções
+   auxiliares abaixo, as quais fazem a memsa coisa, porem, cada
+   uma para uma flecha especifica. Então, não é necessario descreve-las. -}
 testPossibleUpdate :: Matrix -> Int -> Int -> Int -> Bool
 testPossibleUpdate matrix matrixLen borderIndex arrow | (arrow == 0) = (testAllNW matrix matrixLen (borderToCordinate matrixLen borderIndex))
 											      	  | (arrow == 1) = (testAllN matrix matrixLen (borderToCordinate matrixLen borderIndex))

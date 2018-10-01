@@ -5,11 +5,16 @@ module Elements (Element, getTotalArrows, getPointingArrows, emptyElementList) w
    pointing to this element. -}
 type Element = (Int, Int)
 
+{- Retorna o numero total de flechas que podem
+   apontar para aquele elemento. -}
 getTotalArrows :: Element -> Int
 getTotalArrows (nTotal, _) = nTotal
 
+{- Retorna o numero total de flechas que estão
+   apontando atualmente para aquele elemento -}
 getPointingArrows :: Element -> Int
 getPointingArrows (_, nPointing) = nPointing
 
+{- Retorna uma lista vazia do tipo elemet .-}
 emptyElementList :: [Element]
 emptyElementList = []

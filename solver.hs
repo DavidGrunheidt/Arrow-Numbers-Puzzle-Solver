@@ -7,18 +7,21 @@ import Elements
 import Tester
 import Updater
 
-{- Initial function called from main. It starts the recursive 
-   function "tesAllPossibilities" with the first possible state,
-   that is, when we are in the first border of the matrix (upper 
-   left corner), testing the first arrow "NW". -}
+{- Função inicial chamada do main. Inicia o algoritmo
+   recursivo de tentativas descrito na funcao 
+   testAllPossibilities passando como argumentos
+   uma matrix, um array que representa as "bordas", no
+   inicio vazio, o index do array de bordas inicial, "0"
+   e a primeira flecha a ser testada, a "0" representando a
+   "NW". -}
 solve :: Borders
 solve = (testAllPossibilities matrixDefault emptyBorders 0 0)
 
 
-{- Recursive brute force function with backtracking. Test 
-   possibilities putting direction values on the borders and
-   updates the number of arrows pointed to the elements of the
-   matrix. -}
+{- Funcao recursiva usada para iterar e testar se um
+   determinado estado é aceitavel segundo os requisitos
+   do problema das flechas. Retorna um array contendo
+   as flechas as quais representam a solução do problema. -}
 testAllPossibilities :: Matrix -> Borders -> Int -> DirectionValue -> Borders
 											  		 {- Passou do ultimo index das bordas, entao tem solução -}
 testAllPossibilities matrix borders borderIndex arrow | (borderIndex == (bordersLength (matrixLength matrix))) = borders
