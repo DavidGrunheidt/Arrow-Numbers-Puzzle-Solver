@@ -1,7 +1,7 @@
 module Solver (solve) where
 
 import Arrows
-import Borders/
+import Borders
 import Matrix
 import Elements
 import Tester
@@ -17,10 +17,7 @@ solve = (testAllPossibilities matrixDefault emptyBorders 0 0)
 
 {- Recursive brute force function with backtracking. Test 
    possibilities putting direction values on the borders and
-   
-{- Initial function called from main. It starts the recursive 
-   function "tesAllPossibilities" with the first possible state,
-   that is, when we updates the number of arrows pointed to the elements of the
+   updates the number of arrows pointed to the elements of the
    matrix. -}
 testAllPossibilities :: Matrix -> Borders -> Int -> DirectionValue -> Borders
 											  		 {- Passou do ultimo index das bordas, entao tem solução -}
@@ -46,9 +43,3 @@ testAllPossibilities matrix borders borderIndex arrow | (borderIndex == (borders
 											    	  {- Não conseguiu com arrow em determinado index, testa
 											          proxima arrow possivel -}
 											   		  | otherwise = (testAllPossibilities matrix borders borderIndex (arrow + 1))
-{- Initial function called from main. It starts the recursive 
-   function "tesAllPossibilities" with the first possible state,
-   that is, when we 
-{- Initial function called from main. It starts the recursive 
-   function "tesAllPossibilities" with the first possible state,
-   that is, when we 

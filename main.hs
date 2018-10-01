@@ -16,4 +16,4 @@ main = do
 	putStrLn ("Arrows Length = " ++ (show arrowsLength))
 	putStrLn (show (testPossibleUpdate matrix (matrixLength matrix) 2 6))
 	--putStrLn ("New matrix = " ++ (show (matrixUpdate matrix (matrixLength matrix) 2 6)))
-	 putStrLn ("Solved " ++ (show solve))
+	--putStrLn ("Solved " ++ (show solve))
