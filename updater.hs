@@ -21,6 +21,7 @@ matrixUpdate matrix matrixLen borderIndex arrow | (arrow == 0) = (updateAllNW ma
 											 	| otherwise = matrix
 
 
+{- Atualiza o array de bordas adicionando uma nova flecha em uma posição. -}
 bordersUpdate :: Borders -> Int -> Int -> Arrow -> Borders
 bordersUpdate (a : b) index borderIndex arrow | (index == borderIndex) = [arrow] ++ b
 											  | otherwise = [a] ++ (bordersUpdate b (index+1) borderIndex arrow)

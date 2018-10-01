@@ -34,6 +34,8 @@ borderToCordinate matrixLen borderIndex | (borderIndex < matrixLen) = (0 , borde
 						   	                | ((borderIndex >= (3 * matrixLen)) && (borderIndex < (4 * matrixLen))) = ((abs ((mod borderIndex matrixLen) - (matrixLen-1))), 0)
 										          | otherwise = (-1,-1)
 
+{- Verifica se uma posição do array de bordas é uma posição pertencente
+   as bordas horizontais ou não. -}
 isHorizontal :: Int -> Int -> Bool
 isHorizontal borderIndex matrixLen | (borderIndex < matrixLen) = True
                                    | ((borderIndex >= (2 * matrixLen)) && (borderIndex < (3 * matrixLen))) = True
