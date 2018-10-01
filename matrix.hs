@@ -1,4 +1,4 @@
-module Matrix (Matrix, Coordinate, matrixDefault, matrixLength, getMatrixLine) where
+module Matrix (Matrix, Coordinate, matrixDefault, matrixLength, getMatrixLine, getMatrixAfterLine) where
 
 import Elements
 
@@ -22,3 +22,8 @@ matrixLength (lx : ln) = 1 + (matrixLength ln)
 getMatrixLine :: Matrix -> Int -> Int -> [Element]
 getMatrixLine (a : []) index line = if (index == line) then a else emptyElementList
 getMatrixLine (a : b) index line = if (index == line) then a else (getMatrixLine b (index+1) line)
+
+{- Retorna uma submatriz a partir da linha indicada por index -}
+getMatrixAfterLine :: Matrix -> Int -> Int -> Matrix
+getMatrixAfterLine (a : b) index line | (index < line) = (getMatrixAfterLine b (index+1) line)
+									  | (index == line) = b
