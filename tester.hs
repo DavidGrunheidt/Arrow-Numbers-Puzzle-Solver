@@ -1,4 +1,4 @@
-module Tester (testElement, testBordersConstraints, testPossibleUpdate, testAllNW, testAllN, testAllNE, testAllE, testAllSE, testAllS, testAllSW, testAllW) where
+module Tester (testBordersConstraints, testPossibleUpdate) where
 
 import Matrix
 import Borders
@@ -31,57 +31,34 @@ testBordersConstraints n i d | (i == 0) = if ((d == 4) || (d == 5)) then True el
    apontando pra ele, pois o numero de flechas apontando já é igual
    ao numero de flechas que devem apontar. Utiliza-se das funções
    auxiliares abaixo, as quais fazem a memsa coisa, porem, cada
-   uma para uma flecha especifica. Então, não é necessario descreve-las. -}
+   uma para uma flecha especifica e um tipo de percorrimento
+   especifico. -}
 testPossibleUpdate :: Matrix -> Int -> Int -> Int -> Bool
-testPossibleUpdate matrix matrixLen borderIndex arrow | (arrow == 0) = (testAllNW matrix matrixLen (isHorizontal borderIndex matrixLen) (borderToCordinate matrixLen borderIndex))
-											      	  | (arrow == 1) = (testAllN matrix matrixLen (borderToCordinate matrixLen borderIndex))
-											          | (arrow == 2) = (testAllNE matrix matrixLen (isHorizontal borderIndex matrixLen) (borderToCordinate matrixLen borderIndex))
-											 	      | (arrow == 3) = (testAllE matrix matrixLen (borderToCordinate matrixLen borderIndex))
-											 	      | (arrow == 4) = (testAllSE matrix matrixLen (isHorizontal borderIndex matrixLen) (borderToCordinate matrixLen borderIndex))
-											 	      | (arrow == 5) = (testAllS matrix matrixLen (borderToCordinate matrixLen borderIndex))
-											 	      | (arrow == 6) = (testAllSW matrix matrixLen (isHorizontal borderIndex matrixLen) (borderToCordinate matrixLen borderIndex))
-											 	      | (arrow == 7) = (testAllW matrix matrixLen (borderToCordinate matrixLen borderIndex))
+testPossibleUpdate matrix matrixLen borderIndex arrow | ((arrow == 0) || (arrow == 4)) = (testDiagonalRight matrix (matrixLength matrix) (isVertical borderIndex matrixLen) (equivalentCoordinate (borderToCordinate matrixLen borderIndex) arrow matrixLen borderIndex))
+											      	  | ((arrow == 1) || (arrow == 5)) = (testColumn matrix (borderToCordinate matrixLen borderIndex))
+											          | ((arrow == 2) || (arrow == 6)) = (testDiagonalLeft matrix (matrixLength matrix) (isVertical borderIndex matrixLen) (equivalentCoordinate (borderToCordinate matrixLen borderIndex) arrow matrixLen borderIndex))
+											 	      | ((arrow == 3) || (arrow == 7)) = (testLine (matrix!!(getCordinateRow (borderToCordinate matrixLen borderIndex))))
 											 	      | otherwise = False
 
-testElement :: Matrix -> Coordinate -> Bool
-testElement matrix (x,y) = if ((getTotalArrows ((getMatrixLine matrix 0 x)!!y)) > (getPointingArrows ((getMatrixLine matrix 0 x)!!y))) then True else False
+verifyElement :: [Element] -> Int -> Bool
+verifyElement line column = ((getPointingArrows (line!!column)) < (getTotalArrows (line!!column)))
 
-testAllN :: Matrix -> Int -> Coordinate -> Bool
-testAllN matrix matrixLen (x, y) | (x > 0) = if (testElement matrix (x,y)) then (testAllN matrix matrixLen ((x-1), y)) else False
-								 | otherwise = (testElement matrix (x,y))
+testLine ::[Element] -> Bool
+testLine (a : []) = if (getPointingArrows a) < (getTotalArrows a) then True else False
+testLine (a : b) = if (getPointingArrows a) < (getTotalArrows a) then (testLine b) else False
 
-testAllE :: Matrix -> Int -> Coordinate -> Bool
-testAllE matrix matrixLen (x, y) | (y < (matrixLen-1)) = if (testElement matrix (x,y)) then (testAllE matrix matrixLen (x, (y+1))) else False
-								 | otherwise = (testElement matrix (x,y))
+testColumn :: Matrix -> Coordinate -> Bool
+testColumn (a : []) (_, y) = (verifyElement a y)
+testColumn (a : b) (_, y)  = if (verifyElement a y) then (testColumn b (0, y)) else False
 
-testAllS :: Matrix -> Int -> Coordinate -> Bool
-testAllS matrix matrixLen (x, y) | (x < (matrixLen-1)) = if (testElement matrix (x,y)) then (testAllS matrix matrixLen ((x+1), y)) else False
-								 | otherwise = (testElement matrix (x,y))
+testDiagonalRight :: Matrix -> Int -> Bool -> Coordinate -> Bool
+testDiagonalRight (a : b) matrixLen isVertical (x, y) | (isVertical && ((x+1) < (matrixLen-1)) && (y < (matrixLen-1))) = if (verifyElement (b!!0) y) then (testDiagonalRight b matrixLen isVertical ((x+1), (y+1))) else False
+											          | (isVertical && (((x+1) == (matrixLen-1)) || (y == (matrixLen-1)))) = (verifyElement (b!!0) y)
+	                                                  | ((not isVertical) && (x < (matrixLen-1)) && ((y+1) < (matrixLen-1))) = if (verifyElement a (y+1)) then (testDiagonalRight b matrixLen isVertical ((x+1), (y+1))) else False
+											          | otherwise = (verifyElement a (y+1))
 
-testAllW :: Matrix -> Int -> Coordinate -> Bool
-testAllW matrix matrixLen (x, y) | (y > 0) = if (testElement matrix (x,y)) then (testAllW matrix matrixLen (x, (y-1))) else False
-								 | otherwise = (testElement matrix (x,y))
-
-testAllNW :: Matrix -> Int -> Bool -> Coordinate -> Bool
-testAllNW matrix matrixLen isHorizontal (x, y) | (isHorizontal && (x > 0) && ((y-1) > 0)) = if (testElement matrix (x,(y-1))) then (testAllNW matrix matrixLen isHorizontal ((x-1), (y-1))) else False
-								               | ((not isHorizontal) && ((x-1) > 0) && (y > 0)) = if (testElement matrix ((x-1), y)) then (testAllNW matrix matrixLen isHorizontal ((x-1), (y-1))) else False
-								               | (isHorizontal && ((x == 0) || ((y-1) == 0))) =  (testElement matrix (x,(y-1)))
-								               | otherwise = (testElement matrix ((x-1),y))
-
-testAllNE :: Matrix -> Int -> Bool -> Coordinate -> Bool
-testAllNE matrix matrixLen isHorizontal (x, y) | (isHorizontal && (x > 0) && ((y+1) < (matrixLen-1))) = if (testElement matrix (x,(y+1))) then (testAllNE matrix matrixLen isHorizontal ((x-1), (y+1))) else False
-								               | ((not isHorizontal) && ((x-1) > 0) && (y < (matrixLen-1))) = if (testElement matrix ((x-1),y)) then (testAllNE matrix matrixLen isHorizontal ((x-1), (y+1))) else False
-								               | (isHorizontal && ((x == 0) || ((y+1) == (matrixLen-1)))) = (testElement matrix (x,(y+1)))
-								               | otherwise = (testElement matrix ((x-1),y))
-
-testAllSE :: Matrix -> Int -> Bool -> Coordinate -> Bool
-testAllSE matrix matrixLen isHorizontal (x, y) | (isHorizontal && (x < (matrixLen-1)) && ((y+1) < (matrixLen-1))) = if (testElement matrix (x,(y+1))) then (testAllSE matrix matrixLen isHorizontal ((x+1), (y+1))) else False
-								  			   | ((not isHorizontal) && ((x+1)  < (matrixLen-1)) && (y < (matrixLen-1))) = if (testElement matrix ((x+1),y)) then (testAllSE matrix matrixLen isHorizontal ((x+1), (y+1))) else False
-								  			   | (isHorizontal && ((x == (matrixLen-1)) || ((y+1) == (matrixLen-1)))) = (testElement matrix (x,(y+1)))
-								  			   | otherwise = (testElement matrix ((x+1),y))
-
-testAllSW :: Matrix -> Int -> Bool -> Coordinate -> Bool
-testAllSW matrix matrixLen isHorizontal (x, y) | (isHorizontal && (x < (matrixLen-1)) && ((y-1) > 0)) = if (testElement matrix (x,(y-1))) then (testAllSW matrix matrixLen isHorizontal ((x+1), (y-1))) else False
-								               | ((not isHorizontal) && ((x+1)  < (matrixLen-1)) && (y > 0)) = if (testElement matrix ((x+1),y)) then (testAllSW matrix matrixLen isHorizontal ((x+1), (y-1))) else False
-								               | (isHorizontal && ((x == (matrixLen-1)) || ((y+1) == 0))) = (testElement matrix (x,(y-1)))
-								               | otherwise = (testElement matrix ((x+1),y))
+testDiagonalLeft :: Matrix -> Int -> Bool -> Coordinate -> Bool
+testDiagonalLeft (a : b) matrixLen isVertical (x, y) | (isVertical && ((x+1) < (matrixLen-1)) && (y > 0)) = if (verifyElement (b!!0) y) then (testDiagonalLeft b matrixLen isVertical ((x+1), (y-1))) else False
+										             | (isVertical && (((x+1) == (matrixLen-1)) || (y == 0))) = (verifyElement (b!!0) y)
+	                                                 | ((not isVertical) && (x < (matrixLen-1)) && ((y-1) > 0)) = if (verifyElement a (y-1)) then (testDiagonalLeft b matrixLen isVertical ((x+1), (y-1))) else False
+										             | otherwise = (verifyElement a (y-1))

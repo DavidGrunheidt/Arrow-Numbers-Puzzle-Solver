@@ -1,4 +1,4 @@
-module Borders (Borders, emptyBorders, bordersLength, getArrowFromBorder, borderToCordinate, isHorizontal) where
+module Borders (Borders, emptyBorders, bordersLength, getArrowFromBorder, borderToCordinate, isVertical, isHorizontal) where
 
 import Arrows
 import Matrix
@@ -29,14 +29,21 @@ getArrowFromBorder index borders = borders!!index
    a matriz caso o teste retorne valido. -}
 borderToCordinate :: Int -> Int -> Coordinate
 borderToCordinate matrixLen borderIndex | (borderIndex < matrixLen) = (0 , borderIndex)
-										          | ((borderIndex >= matrixLen) && (borderIndex < (2 * matrixLen))) = ((borderIndex - matrixLen) , (matrixLen-1))
-									             | ((borderIndex >= (2 * matrixLen)) && (borderIndex < (3 * matrixLen))) = ((matrixLen-1) , (abs ((mod borderIndex matrixLen) - (matrixLen-1))))
-						   	                | ((borderIndex >= (3 * matrixLen)) && (borderIndex < (4 * matrixLen))) = ((abs ((mod borderIndex matrixLen) - (matrixLen-1))), 0)
-										          | otherwise = (-1,-1)
+										                    | ((borderIndex >= matrixLen) && (borderIndex < (2 * matrixLen))) = ((borderIndex - matrixLen) , (matrixLen-1))
+									                      | ((borderIndex >= (2 * matrixLen)) && (borderIndex < (3 * matrixLen))) = (0 , (abs ((mod borderIndex matrixLen) - (matrixLen-1))))
+						   	                        | ((borderIndex >= (3 * matrixLen)) && (borderIndex < (4 * matrixLen))) = ((abs ((mod borderIndex matrixLen) - (matrixLen-1))), 0)
+										                    | otherwise = (-1,-1)
 
 {- Verifica se uma posição do array de bordas é uma posição pertencente
-   as bordas horizontais ou não. -}
+   as bordas verticais (direita ou esquerda) ou não. -}
+isVertical :: Int -> Int -> Bool
+isVertical borderIndex matrixLen | (borderIndex < matrixLen) = False
+                                   | ((borderIndex >= (2 * matrixLen)) && (borderIndex < (3 * matrixLen))) = False
+                                   | otherwise = True
+
+{- Verifica se uma posição do array de bordas é uma posição pertencente
+   as bordas verticais (direita ou esquerda) ou não. -}
 isHorizontal :: Int -> Int -> Bool
-isHorizontal borderIndex matrixLen | (borderIndex < matrixLen) = True
-                                   | ((borderIndex >= (2 * matrixLen)) && (borderIndex < (3 * matrixLen))) = True
-                                   | otherwise = False
+isHorizontal borderIndex matrixLen | (borderIndex < matrixLen) = False
+                                   | ((borderIndex >= (2 * matrixLen)) && (borderIndex < (3 * matrixLen))) = False
+                                   | otherwise = True

@@ -1,4 +1,4 @@
-module Matrix (Matrix, Coordinate, matrixDefault, matrixLength, getMatrixLine, getMatrixAfterLine) where
+module Matrix (Matrix, Coordinate, matrixDefault, matrixLength, getMatrixLine, getMatrixAfterLine, getCordinateRow, equivalentCoordinate0) where
 
 import Elements
 
@@ -27,3 +27,15 @@ getMatrixLine (a : b) index line = if (index == line) then a else (getMatrixLine
 getMatrixAfterLine :: Matrix -> Int -> Int -> Matrix
 getMatrixAfterLine (a : b) index line | (index < line) = (getMatrixAfterLine b (index+1) line)
 									  | (index == line) = b
+
+{- Retorna a linha de uma cordenada -}
+getCordinateRow :: Coordinate -> Int
+getCordinateRow (a, _) = a
+
+{- Converte uma coordenada para uma equivalente de melhor percorrimento
+   (cima p/ baixo) -}
+equivalentCoordinate :: Coordinate -> Int -> Int -> Int -> Coordinate
+equivalentCoordinate (x, y) arrow matrixLen borderIndex | ((arrow == 0) && (borderIndex > matrixLen) && (borderIndex < (2 * matrixLen))) = (((matrixLen-1) - x),y)
+														| ((arrow == 0) && (borderIndex >= (2 * matrixLen)) && (borderIndex < (3 * matrixLen))) = (0, ((matrixLen-1) - y))
+														| ((arrow == 2) && (borderIndex >= (3 * matrixLen)) && (borderIndex < (4 * matrixLen))) = (0, y)
+														| ((arrow == 2) && )
