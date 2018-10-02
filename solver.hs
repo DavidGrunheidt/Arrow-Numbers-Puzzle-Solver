@@ -14,8 +14,21 @@ import Updater
    inicio vazio, o index do array de bordas inicial, "0"
    e a primeira flecha a ser testada, a "0" representando a
    "NW". -}
-solve :: Borders
-solve = (testAllPossibilities matrixDefault emptyBorders 0 0)
+solve :: Matrix -> Borders
+solve matrix = (testAllPossibilities matrix emptyBorders 0 0)
+
+{- Função auxiliar para verificar se uma linha da matriz foi
+   resolvida, ou seja, se tem o numero maximo de flechas possiveis
+   apontando para ela. -}
+isSolvedAux :: [Element] -> Bool
+isSolvedAux (a : []) = if ((getPointingArrows a) == (getTotalArrows a)) then True else False
+isSolvedAux (a : b) = if ((getPointingArrows a) == (getTotalArrows a)) then (isSolvedAux b) else False
+
+{- Função que verifica se cada elemento da matriz possui o numero maximo de 
+   flechas apontando para ela. -}
+isSolved :: Matrix -> Bool
+isSolved (a : []) = (isSolvedAux a)
+isSolved (a : b) = if (isSolvedAux a) then (isSolved b) else False
 
 
 {- Funcao recursiva usada para iterar e testar se um
@@ -24,7 +37,7 @@ solve = (testAllPossibilities matrixDefault emptyBorders 0 0)
    as flechas as quais representam a solução do problema. -}
 testAllPossibilities :: Matrix -> Borders -> Int -> DirectionValue -> Borders
 											  		 {- Passou do ultimo index das bordas, entao tem solução -}
-testAllPossibilities matrix borders borderIndex arrow | (borderIndex == (bordersLength (matrixLength matrix))) = borders
+testAllPossibilities matrix borders borderIndex arrow | (borderIndex == (bordersLength (matrixLength matrix))) = if (isSolved matrix) then borders else emptyBorders
 											   		  {- Testou todas as arrows, volta uma borda via backtracking 
 											      	  e testa a proxima arrow dessa borda anterior. -}
 											   		  | (arrow == arrowsLength) = emptyBorders
@@ -34,7 +47,7 @@ testAllPossibilities matrix borders borderIndex arrow | (borderIndex == (borders
 											  	 	  if (testPossibleUpdate matrix (matrixLength matrix) borderIndex arrow) 
 											   			then do
 											   				let mAux = (matrixUpdate matrix (matrixLength matrix) borderIndex arrow)
-											   				let bUpdated = (bordersUpdate borders 0 borderIndex (getArrow arrow))
+											   				let bUpdated = borders ++ [(getArrow arrow)]
 											   				let bAux = (testAllPossibilities mAux bUpdated (borderIndex+1) 0)
 											   				if (bAux == emptyBorders) 
 											   					then (testAllPossibilities matrix borders borderIndex (arrow+1))

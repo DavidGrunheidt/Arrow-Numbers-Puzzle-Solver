@@ -34,31 +34,47 @@ testBordersConstraints n i d | (i == 0) = if ((d == 4) || (d == 5)) then True el
    uma para uma flecha especifica e um tipo de percorrimento
    especifico. -}
 testPossibleUpdate :: Matrix -> Int -> Int -> Int -> Bool
-testPossibleUpdate matrix matrixLen borderIndex arrow | ((arrow == 0) || (arrow == 4)) = (testDiagonalRight matrix (matrixLength matrix) (isVertical borderIndex matrixLen) (equivalentCoordinate (borderToCordinate matrixLen borderIndex) arrow matrixLen borderIndex))
+testPossibleUpdate matrix matrixLen borderIndex arrow | (arrow == 0) = (testDiagonalRight matrix matrixLen (not (isVertical borderIndex matrixLen)) (equivalentCoordinate (borderToCordinate matrixLen borderIndex) arrow matrixLen borderIndex))
 											      	  | ((arrow == 1) || (arrow == 5)) = (testColumn matrix (borderToCordinate matrixLen borderIndex))
-											          | ((arrow == 2) || (arrow == 6)) = (testDiagonalLeft matrix (matrixLength matrix) (isVertical borderIndex matrixLen) (equivalentCoordinate (borderToCordinate matrixLen borderIndex) arrow matrixLen borderIndex))
+											          | (arrow == 2) = (testDiagonalLeft matrix matrixLen (not (isVertical borderIndex matrixLen)) (equivalentCoordinate (borderToCordinate matrixLen borderIndex) arrow matrixLen borderIndex))
 											 	      | ((arrow == 3) || (arrow == 7)) = (testLine (matrix!!(getCordinateRow (borderToCordinate matrixLen borderIndex))))
+											 	      | (arrow == 4) = (testDiagonalRight matrix matrixLen (isVertical borderIndex matrixLen) (borderToCordinate matrixLen borderIndex))
+											 	      | (arrow == 6) = (testDiagonalLeft matrix matrixLen (isVertical borderIndex matrixLen) (borderToCordinate matrixLen borderIndex))
 											 	      | otherwise = False
 
+{- Verifica se um elemento da matriz possui o numero maximo de flechas 
+   apontando para ele. -}
 verifyElement :: [Element] -> Int -> Bool
 verifyElement line column = ((getPointingArrows (line!!column)) < (getTotalArrows (line!!column)))
 
-testLine ::[Element] -> Bool
-testLine (a : []) = if (getPointingArrows a) < (getTotalArrows a) then True else False
-testLine (a : b) = if (getPointingArrows a) < (getTotalArrows a) then (testLine b) else False
+{- Verifica se um elemento da matriz possui o numero maximo de flechas 
+   apontando para ele. -}
+verifyMatrix :: Matrix -> Coordinate -> Bool
+verifyMatrix matrix (x, y) = ((getPointingArrows ((matrix!!x)!!y)) < (getTotalArrows ((matrix!!x)!!y)))
 
+{- Verifica se um todos os elementos de uma linha da matriz possuem 
+   o numero maximo de flechas apontando para eles. -}
+testLine :: [Element] -> Bool
+testLine (a : []) = if ((getPointingArrows a) < (getTotalArrows a)) then True else False
+testLine (a : b) = if ((getPointingArrows a) < (getTotalArrows a)) then (testLine b) else False
+
+{- Verifica se um todos os elementos de uma coluna da matriz possuem 
+   o numero maximo de flechas apontando para eles. -}
 testColumn :: Matrix -> Coordinate -> Bool
 testColumn (a : []) (_, y) = (verifyElement a y)
 testColumn (a : b) (_, y)  = if (verifyElement a y) then (testColumn b (0, y)) else False
 
+{- Verifica se todos os elementos de uma diagonal qualquer possuem
+   o numero maximo de flechas apontando para eles -}
 testDiagonalRight :: Matrix -> Int -> Bool -> Coordinate -> Bool
-testDiagonalRight (a : b) matrixLen isVertical (x, y) | (isVertical && ((x+1) < (matrixLen-1)) && (y < (matrixLen-1))) = if (verifyElement (b!!0) y) then (testDiagonalRight b matrixLen isVertical ((x+1), (y+1))) else False
-											          | (isVertical && (((x+1) == (matrixLen-1)) || (y == (matrixLen-1)))) = (verifyElement (b!!0) y)
-	                                                  | ((not isVertical) && (x < (matrixLen-1)) && ((y+1) < (matrixLen-1))) = if (verifyElement a (y+1)) then (testDiagonalRight b matrixLen isVertical ((x+1), (y+1))) else False
-											          | otherwise = (verifyElement a (y+1))
+testDiagonalRight matrix matrixLen isVertical (x, y) | (isVertical && ((x+1) < (matrixLen-1)) && (y < (matrixLen-1))) = if (verifyMatrix matrix ((x+1), y)) then (testDiagonalRight matrix matrixLen isVertical ((x+1), (y+1))) else False
+											         | (isVertical && (((x+1) == (matrixLen-1)) || (y == (matrixLen-1)))) = (verifyMatrix matrix ((x+1), y))
+	                                                 | ((not isVertical) && (x < (matrixLen-1)) && ((y+1) < (matrixLen-1))) = if (verifyMatrix matrix (x, (y+1))) then (testDiagonalRight matrix matrixLen isVertical ((x+1), (y+1))) else False
+											         | otherwise = (verifyMatrix matrix (x, (y+1)))
 
+{- igual a de cima -}
 testDiagonalLeft :: Matrix -> Int -> Bool -> Coordinate -> Bool
-testDiagonalLeft (a : b) matrixLen isVertical (x, y) | (isVertical && ((x+1) < (matrixLen-1)) && (y > 0)) = if (verifyElement (b!!0) y) then (testDiagonalLeft b matrixLen isVertical ((x+1), (y-1))) else False
-										             | (isVertical && (((x+1) == (matrixLen-1)) || (y == 0))) = (verifyElement (b!!0) y)
-	                                                 | ((not isVertical) && (x < (matrixLen-1)) && ((y-1) > 0)) = if (verifyElement a (y-1)) then (testDiagonalLeft b matrixLen isVertical ((x+1), (y-1))) else False
-										             | otherwise = (verifyElement a (y-1))
+testDiagonalLeft matrix matrixLen isVertical (x, y) | (isVertical && ((x+1) < (matrixLen-1)) && (y > 0)) = if (verifyMatrix matrix ((x+1), y)) then (testDiagonalLeft matrix matrixLen isVertical ((x+1), (y-1))) else False
+										            | (isVertical && (((x+1) == (matrixLen-1)) || (y == 0))) = (verifyMatrix matrix ((x+1), y))
+	                                                | ((not isVertical) && (x < (matrixLen-1)) && ((y-1) > 0)) = if (verifyMatrix matrix (x, (y-1))) then (testDiagonalLeft matrix matrixLen isVertical ((x+1), (y-1))) else False
+										            | otherwise = (verifyMatrix matrix (x, (y-1)))
